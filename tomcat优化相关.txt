@@ -1,0 +1,31 @@
+tomcat 性能调配：
+	1.调配jvm运行内存：修改以下文件
+		Windows 下的catalina.bat
+		Linux 下的catalina.sh
+			JAVA_OPTS='-Xms256m -Xmx512m'
+			-Xms<size> JVM初始化堆的大小
+			-Xmx<size> JVM堆的最大值 实际参数大小根据服务器配置或者项目具体设置.
+
+	2.线程优化：server.xml文件中调配
+		<Connector port="80" protocol="HTTP/1.1" maxThreads="600" minSpareThreads="100" maxSpareThreads="500" acceptCount="700"
+		connectionTimeout="20000"  />
+		maxThreads="X" 表示最多同时处理X个连接
+		minSpareThreads="X" 初始化X个连接
+		maxSpareThreads="X" 表示如果最多可以有X个线程，一旦超过X个,则会关闭不在需要的线程
+		acceptCount="X" 当同时连接的人数达到maxThreads时,还可以排队,队列大小为X.超过X就不处理
+	3.禁用8005shutdown的接口，不然别人就连接到8005之后输入shutdown就可以关闭tomcat
+		修改为：
+		<Server port="-1" shutdown="SHUTDOWN">
+	4.设置i/o模式，
+		将bio协议模式更改为nio/nio2协议模式
+		bio模式协议：HTTP1.1
+		nio模式协议：org.apache.cotyote.http11.Http11NioProtocol
+		nio2模式协议：org.apache.cotyote.http11.Http11Nio2Protocol
+		apr模式协议：org.apache.coyote.http11.Http11AprProtocol
+		bio协议模式，适用于简单流程
+		nio协议模式，适用于后台耗时的请求的操作
+		ARP模式：tomcat以jni方式调用apache http服务器的核心动态链接库来处理文件或网络传输操作
+	5.官网的doc
+		http://tomcat.apache.org/tomcat-7.0-doc/config/http.html
+	6.指定版本可以查看官方网站的doc文档，进行性能调优。。。。。。
+		
