@@ -1,0 +1,13 @@
+# SpringBoot注解相关笔记
+
+## 1.@EnableTransactionManagement
+
+这个注解不是必须的：事务管理，jpa和jdbc都是实现的PlatformTransactionManager,如果项目中引用jdbc的依赖，框架会自动注入，DataSourceTransactionManager实例，如果是jpa依赖，框架就会自动注入JpaTransactionManager实例。
+
+在启动类中如果指定platformTransactionManager的bean注入时，需要在启动类上开启注解事务管理。
+
+spring容器中，手动注解@Bean将被优先加载，框架对应的类就不会重新实例化对应的bean。@Transactional注解在类上，则整个类的所有方法都默认支持事务，方法上（一定时对外暴露的方法上，private方法上则不支持事务。），则方法可以支持事务。
+
+如果项目spring容器中存在多个platformTransactionManager实例，没有实现TransactionManagementConfigurer指定默认值，方法上使用@transactional注解的时候，必须指定value属性。
+
+参考相关博客：https://blog.csdn.net/catoop/article/details/50595702
